@@ -7,11 +7,11 @@ module DataTable
 
   module ClassMethods
     def for_data_table controller, fields, search_fields=nil, explicit_block=nil, &implicit_block
-      params = Hash[*controller.params.map {|key, value| [key.to_s.downcase.to_sym, value] }.flatten]
+      params = Hash[*controller.params.to_h.map {|key, value| [key.to_s.downcase.to_sym, value] }.flatten]
       search_fields ||= fields
       block = (explicit_block or implicit_block)
 
-      objects = _find_objects params, fields, search_fields
+      objects = _find_objects params.to_h, fields, search_fields
       matching_count = objects.respond_to?(:total_entries) ? objects.total_entries : _matching_count(params, search_fields)
 
       {:sEcho                => params[:secho].to_i,
